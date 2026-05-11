@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HFC Rider Management System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            min-height: 100vh; 
+            color: #333; 
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        /* Login */
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            margin: 80px auto;
+            text-align: center;
+        }
+        .login-box h1 { color: #e94560; margin-bottom: 10px; font-size: 32px; }
+        .login-box .subtitle { color: #666; margin-bottom: 30px; font-size: 14px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 600; font-size: 14px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus { outline: none; border-color: #e94560; }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4); }
+        .btn-secondary { background: linear-gradient(135deg, #533483 0%, #7b2cbf 100%); }
+        .btn-success { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); }
+        .btn-warning { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .btn-small { padding: 8px 16px; font-size: 13px; width: auto; }
+        
+        .hidden { display: none !important; }
+        
+        /* Dashboard */
+        .dashboard {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+        .header h2 { color: #1a1a2e; font-size: 24px; }
+        .header .user-info { display: flex; align-items: center; gap: 15px; }
+        .logout-btn {
+            padding: 10px 20px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 13px; opacity: 0.8; margin-bottom: 8px; text-transform: uppercase; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: #e94560; }
+        
+        .card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e94560;
+        }
+        .card h3 {
+            color: #1a1a2e;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e94560;
+            font-size: 18px;
+        }
+        
+        /* Order Row */
+        .order-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            gap: 10px;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .order-row input, .order-row select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 14px;
+        }
+        .remove-order {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .add-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        /* Summary Box */
+        .summary-box {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .summary-box h4 { margin-bottom: 15px; font-size: 20px; color: #e94560; }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 15px;
+        }
+        .summary-item.total {
+            font-size: 22px;
+            font-weight: bold;
+            border-bottom: none;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(233, 69, 96, 0.5);
+            color: #e94560;
+        }
+        
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #1a1a2e; color: white; font-weight: 600; }
+        tr:hover { background: #f5f5f5; }
+        
+        .status {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-approved { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .status-deleted { background: #e2e3e5; color: #383d41; }
+        
+        .action-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+        .action-btns button { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; color: white; }
+        
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .close-modal {
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+        }
+        
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #666;
+            background: none;
+            border: none;
+            font-size: 14px;
+        }
+        .tab.active { background: #e94560; color: white; }
+        
+        /* Rider Card */
+        .rider-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .rider-info h4 { color: #1a1a2e; margin-bottom: 5px; }
+        .rider-info p { color: #666; font-size: 14px; }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        /* WhatsApp Button */
+        .whatsapp-btn {
+            background: #25d366 !important;
+            color: white !important;
+        }
+        .whatsapp-btn:hover { background: #128c7e !important; }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .order-row { grid-template-columns: 1fr; gap: 5px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .header { flex-direction: column; gap: 15px; text-align: center; }
+            .rider-card { flex-direction: column; gap: 15px; text-align: center; }
+        }
+        
+        .section-title {
+            color: #e94560;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .hfc-logo {
+            font-size: 48px;
+            font-weight: 900;
+            color: #e94560;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Login Section -->
+    <div id="loginSection">
+        <div class="container">
+            <div class="login-box">
+                <div class="hfc-logo">HFC</div>
+                <h1>Rider Portal</h1>
+                <p class="subtitle">HFC Restaurant Delivery Management</p>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-small" style="flex: 1;" onclick="selectRole('rider')" id="roleRider">Rider</button>
+                    <button class="btn btn-secondary btn-small" style="flex: 1;" onclick="selectRole('admin')" id="roleAdmin">Admin</button>
+                </div>
+
+                <div id="loginAlert"></div>
+
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" placeholder="Username enter karein">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Password enter karein">
+                </div>
+
+                <button class="btn" onclick="login()">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rider Dashboard -->
+    <div id="riderDashboard" class="hidden">
+        <div class="container">
+            <div class="dashboard">
+                <div class="header">
+                    <div>
+                        <h2>👋 Welcome, <span id="riderName"></span></h2>
+                        <p style="color: #666; margin-top: 5px; font-size: 14px;">Date: <span id="currentDate"></span></p>
+                    </div>
+                    <div class="user-info">
+                        <button class="btn btn-secondary btn-small" onclick="openPasswordModal()">🔑 Password</button>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Opening Balance</h3>
+                        <div class="value" id="statOpening">Rs. 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <div class="value" id="statOrders">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Online Payments</h3>
+                        <div class="value" id="statOnline">Rs. 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Closing Balance</h3>
+                        <div class="value" id="statClosing">Rs. 0</div>
+                    </div>
+                </div>
+
+                <form id="riderForm" onsubmit="submitReport(event)">
+                    <!-- Opening Balance -->
+                    <div class="card">
+                        <h3>💰 Opening Balance & Expenses</h3>
+                        <div class="form-group">
+                            <label>Opening Balance (Rs.) - Rolling ke liye</label>
+                            <input type="number" id="openingBalance" required placeholder="e.g. 2000" onchange="calculateSummary()">
+                        </div>
+                        <div class="form-group">
+                            <label>Fuel / Petrol Amount (Rs.)</label>
+                            <input type="number" id="fuelAmount" placeholder="e.g. 500" onchange="calculateSummary()">
+                        </div>
+                        <div class="form-group">
+                            <label>Other Expenses (Rs.)</label>
+                            <input type="number" id="otherExpenses" placeholder="e.g. 100" onchange="calculateSummary()">
+                        </div>
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <input type="text" id="riderNotes" placeholder="Koi bhi notes...">
+                        </div>
+                    </div>
+
+                    <!-- Online Payments Section -->
+                    <div class="card">
+                        <h3>💳 Online Payments (Customers ne online pay kiya)</h3>
+                        <p style="color: #666; font-size: 13px; margin-bottom: 15px;">Jab customer online payment kare (Easypaisa, JazzCash, Bank etc.)</p>
+                        <div id="onlinePaymentsContainer">
+                            <!-- Online payment rows will be added here -->
+                        </div>
+                        <button type="button" class="add-btn" onclick="addOnlinePayment()">+ Online Payment Add Karein</button>
+                    </div>
+
+                    <!-- Orders Section -->
+                    <div class="card">
+                        <h3>📦 Delivered Orders</h3>
+                        <div id="ordersContainer">
+                            <!-- Orders will be added here -->
+                        </div>
+                        <button type="button" class="add-btn" onclick="addOrder()">+ Naya Order Add Karein</button>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="summary-box">
+                        <h4>📊 Daily Summary</h4>
+                        <div class="summary-item">
+                            <span>Opening Balance:</span>
+                            <span id="sumOpening">Rs. 0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>+ Total Order Amount:</span>
+                            <span id="sumTotalOrders">Rs. 0</span>
+                        </div>
+                        <div class="summary-item" style="color: #ff6b6b;">
+                            <span>- Online Payments (Customer ne diya):</span>
+                            <span id="sumOnline">Rs. 0</span>
+                        </div>
+                        <div class="summary-item" style="color: #ff6b6b;">
+                            <span>- Delivery Charges (Rs. 100 per order):</span>
+                            <span id="sumDelivery">Rs. 0</span>
+                        </div>
+                        <div class="summary-item" style="color: #ff6b6b;">
+                            <span>- Fuel / Petrol:</span>
+                            <span id="sumFuel">Rs. 0</span>
+                        </div>
+                        <div class="summary-item" style="color: #ff6b6b;">
+                            <span>- Other Expenses:</span>
+                            <span id="sumOther">Rs. 0</span>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Closing Balance (Cash in hand):</span>
+                            <span id="sumClosing">Rs. 0</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button type="submit" class="btn" style="flex: 1;">📤 Submit Report</button>
+                    </div>
+                </form>
+
+                <!-- My Submissions -->
+                <div class="card" style="margin-top: 30px;">
+                    <h3>📋 Meri Reports</h3>
+                    <div id="mySubmissions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden">
+        <div class="container">
+            <div class="dashboard">
+                <div class="header">
+                    <div>
+                        <div class="hfc-logo" style="font-size: 32px;">HFC</div>
+                        <h2>Admin Panel</h2>
+                        <p style="color: #666; font-size: 14px;">Restaurant Rider Management</p>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('riders')">👥 Riders</button>
+                    <button class="tab" onclick="switchTab('reports')">📋 Reports</button>
+                    <button class="tab" onclick="switchTab('online')">💳 Online Payments</button>
+                </div>
+
+                <!-- Riders Tab -->
+                <div id="ridersTab" class="tab-content">
+                    <div class="card">
+                        <h3>Naya Rider Add Karein</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 15px; align-items: end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Rider Name</label>
+                                <input type="text" id="newRiderName" placeholder="Rider ka naam">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Username</label>
+                                <input type="text" id="newRiderUser" placeholder="Username">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label>Password</label>
+                                <input type="password" id="newRiderPass" placeholder="Password">
+                            </div>
+                            <button class="btn btn-success btn-small" onclick="addRider()" style="padding: 12px 20px;">Add Rider</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>All Riders</h3>
+                        <div id="ridersList"></div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reportsTab" class="tab-content hidden">
+                    <div class="card">
+                        <h3>Filter Reports</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <select id="filterStatus" onchange="renderAdminReports()" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                                <option value="all">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <select id="filterRider" onchange="renderAdminReports()" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                                <option value="all">All Riders</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="allReports"></div>
+                </div>
+
+                <!-- Online Payments Tab -->
+                <div id="onlineTab" class="tab-content hidden">
+                    <div class="card">
+                        <h3>💳 Online Payments Management</h3>
+                        <p style="color: #666; font-size: 14px;">Yahan se customer ko WhatsApp reminder bhejein</p>
+                    </div>
+                    <div id="onlinePaymentsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 Password Change</h3>
+                <button class="close-modal" onclick="closePasswordModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" id="currentPassword">
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword">
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword">
+            </div>
+            <button class="btn" onclick="changePassword()">Change Password</button>
+        </div>
+    </div>
+
+    <!-- Report Details Modal -->
+    <div id="reportModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>📄 Report Details</h3>
+                <button class="close-modal" onclick="closeReportModal()">&times;</button>
+            </div>
+            <div id="reportModalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORAGE ====================
+        let currentUser = null;
+        let currentRole = 'rider';
+
+        function initData() {
+            if (!localStorage.getItem('hfc_riders')) {
+                localStorage.setItem('hfc_riders', JSON.stringify([
+                    { id: 1, name: 'Admin', username: 'admin', password: 'admin123', role: 'admin' }
+                ]));
+            }
+            if (!localStorage.getItem('hfc_reports')) {
+                localStorage.setItem('hfc_reports', JSON.stringify([]));
+            }
+        }
+
+        initData();
+
+        function getRiders() {
+            return JSON.parse(localStorage.getItem('hfc_riders')) || [];
+        }
+
+        function getReports() {
+            return JSON.parse(localStorage.getItem('hfc_reports')) || [];
+        }
+
+        function saveRiders(riders) {
+            localStorage.setItem('hfc_riders', JSON.stringify(riders));
+        }
+
+        function saveReports(reports) {
+            localStorage.setItem('hfc_reports', JSON.stringify(reports));
+        }
+
+        // ==================== LOGIN ====================
+        function selectRole(role) {
+            currentRole = role;
+            document.getElementById('roleRider').className = role === 'rider' ? 'btn btn-small' : 'btn btn-secondary btn-small';
+            document.getElementById('roleAdmin').className = role === 'admin' ? 'btn btn-small' : 'btn btn-secondary btn-small';
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                showAlert('loginAlert', 'Username aur password dono zaroori hain!', 'error');
+                return;
+            }
+            
+            const riders = getRiders();
+            const user = riders.find(r => r.username === username && r.password === password && r.role === currentRole);
+            
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginSection').classList.add('hidden');
+                
+                if (user.role === 'admin') {
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                    loadAdminData();
+                } else {
+                    document.getElementById('riderDashboard').classList.remove('hidden');
+                    loadRiderData();
+                }
+            } else {
+                showAlert('loginAlert', 'Galat username ya password!', 'error');
+            }
+        }
+
+        function showAlert(elementId, message, type) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => el.innerHTML = '', 3000);
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('riderDashboard').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // ==================== RIDER FUNCTIONS ====================
+        function loadRiderData() {
+            document.getElementById('riderName').textContent = currentUser.name;
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ur-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            if (document.getElementById('ordersContainer').children.length === 0) {
+                addOrder();
+            }
+            if (document.getElementById('onlinePaymentsContainer').children.length === 0) {
+                addOnlinePayment();
+            }
+            
+            loadMySubmissions();
+        }
+
+        function addOrder() {
+            const container = document.getElementById('ordersContainer');
+            const orderId = Date.now() + Math.random();
+            
+            const orderDiv = document.createElement('div');
+            orderDiv.className = 'order-row';
+            orderDiv.id = `order-${orderId}`;
+            orderDiv.innerHTML = `
+                <input type="text" placeholder="Order ID / Customer Name" class="order-customer" required>
+                <input type="number" placeholder="Amount (Rs.)" class="order-amount" required onchange="calculateSummary()">
+                <select class="order-payment" onchange="calculateSummary()">
+                    <option value="cash">Cash</option>
+                    <option value="online">Online Paid</option>
+                </select>
+                <input type="number" placeholder="Delivery Charges" class="order-delivery" value="100" onchange="calculateSummary()">
+                <button type="button" class="remove-order" onclick="removeOrder('${orderId}')">❌</button>
+            `;
+            
+            container.appendChild(orderDiv);
+        }
+
+        function removeOrder(id) {
+            document.getElementById(`order-${id}`).remove();
+            calculateSummary();
+        }
+
+        function addOnlinePayment() {
+            const container = document.getElementById('onlinePaymentsContainer');
+            const payId = Date.now() + Math.random();
+            
+            const payDiv = document.createElement('div');
+            payDiv.className = 'order-row';
+            payDiv.id = `online-${payId}`;
+            payDiv.style.background = '#fff3cd';
+            payDiv.innerHTML = `
+                <input type="text" placeholder="Customer Name / Detail" class="online-customer" required>
+                <input type="number" placeholder="Amount (Rs.)" class="online-amount" required onchange="calculateSummary()">
+                <select class="online-method">
+                    <option value="Easypaisa">Easypaisa</option>
+                    <option value="JazzCash">JazzCash</option>
+                    <option value="Bank">Bank Transfer</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" placeholder="Ref / Phone" class="online-ref">
+                <button type="button" class="remove-order" onclick="removeOnlinePayment('${payId}')">❌</button>
+            `;
+            
+            container.appendChild(payDiv);
+        }
+
+        function removeOnlinePayment(id) {
+            document.getElementById(`online-${id}`).remove();
+            calculateSummary();
+        }
+
+        function calculateSummary() {
+            const opening = parseFloat(document.getElementById('openingBalance').value) || 0;
+            const fuel = parseFloat(document.getElementById('fuelAmount').value) || 0;
+            const other = parseFloat(document.getElementById('otherExpenses').value) || 0;
+            
+            let totalOrders = 0;
+            let onlinePayments = 0;
+            let deliveryCharges = 0;
+            
+            // Calculate orders
+            document.querySelectorAll('#ordersContainer .order-row').forEach(row => {
+                const amount = parseFloat(row.querySelector('.order-amount').value) || 0;
+                const delivery = parseFloat(row.querySelector('.order-delivery').value) || 0;
+                
+                totalOrders += amount;
+                deliveryCharges += delivery;
+            });
+            
+            // Calculate online payments (these are MINUS - customer ne online diya)
+            document.querySelectorAll('#onlinePaymentsContainer .order-row').forEach(row => {
+                const amount = parseFloat(row.querySelector('.online-amount').value) || 0;
+                onlinePayments += amount;
+            });
+            
+            // Closing = Opening + Orders - OnlinePayments - DeliveryCharges - Fuel - Other
+            const closing = opening + totalOrders - onlinePayments - deliveryCharges - fuel - other;
+            
+            // Update display
+            document.getElementById('sumOpening').textContent = `Rs. ${opening.toFixed(2)}`;
+            document.getElementById('sumTotalOrders').textContent = `Rs. ${totalOrders.toFixed(2)}`;
+            document.getElementById('sumOnline').textContent = `Rs. ${onlinePayments.toFixed(2)}`;
+            document.getElementById('sumDelivery').textContent = `Rs. ${deliveryCharges.toFixed(2)}`;
+            document.getElementById('sumFuel').textContent = `Rs. ${fuel.toFixed(2)}`;
+            document.getElementById('sumOther').textContent = `Rs. ${other.toFixed(2)}`;
+            document.getElementById('sumClosing').textContent = `Rs. ${closing.toFixed(2)}`;
+            
+            // Update stats
+            document.getElementById('statOpening').textContent = `Rs. ${opening}`;
+            document.getElementById('statOrders').textContent = document.querySelectorAll('#ordersContainer .order-row').length;
+            document.getElementById('statOnline').textContent = `Rs. ${onlinePayments}`;
+            document.getElementById('statClosing').textContent = `Rs. ${closing.toFixed(2)}`;
+        }
+
+        function submitReport(e) {
+            e.preventDefault();
+            
+            const orders = [];
+            document.querySelectorAll('#ordersContainer .order-row').forEach(row => {
+                orders.push({
+                    customer: row.querySelector('.order-customer').value,
+                    amount: parseFloat(row.querySelector('.order-amount').value) || 0,
+                    paymentType: row.querySelector('.order-payment').value,
+                    deliveryCharges: parseFloat(row.querySelector('.order-delivery').value) || 0
+                });
+            });
+            
+            const onlinePayments = [];
+            document.querySelectorAll('#onlinePaymentsContainer .order-row').forEach(row => {
+                onlinePayments.push({
+                    customer: row.querySelector('.online-customer').value,
+                    amount: parseFloat(row.querySelector('.online-amount').value) || 0,
+                    method: row.querySelector('.online-method').value,
+                    reference: row.querySelector('.online-ref').value
+                });
+            });
+            
+            const submission = {
+                id: Date.now(),
+                riderId: currentUser.id,
+                riderName: currentUser.name,
+                date: new Date().toISOString(),
+                displayDate: new Date().toLocaleDateString('ur-PK'),
+                openingBalance: parseFloat(document.getElementById('openingBalance').value) || 0,
+                fuelAmount: parseFloat(document.getElementById('fuelAmount').value) || 0,
+                otherExpenses: parseFloat(document.getElementById('otherExpenses').value) || 0,
+                notes: document.getElementById('riderNotes').value,
+                orders: orders,
+                onlinePayments: onlinePayments,
+                status: 'pending',
+                totalOrderAmount: orders.reduce((sum, o) => sum + o.amount, 0),
+                totalOnlinePayments: onlinePayments.reduce((sum, o) => sum + o.amount, 0),
+                totalDeliveryCharges: orders.reduce((sum, o) => sum + o.deliveryCharges, 0),
+                closingBalance: 0
+            };
+            
+            submission.closingBalance = submission.openingBalance + submission.totalOrderAmount - submission.totalOnlinePayments - submission.totalDeliveryCharges - submission.fuelAmount - submission.otherExpenses;
+            
+            const reports = getReports();
+            reports.push(submission);
+            saveReports(reports);
+            
+            alert('✅ Report successfully submit ho gaya! Admin approve karega.');
+            
+            // Reset form
+            document.getElementById('riderForm').reset();
+            document.getElementById('ordersContainer').innerHTML = '';
+            document.getElementById('onlinePaymentsContainer').innerHTML = '';
+            addOrder();
+            addOnlinePayment();
+            calculateSummary();
+            loadMySubmissions();
+        }
+
+        function loadMySubmissions() {
+            const reports = getReports().filter(s => s.riderId === currentUser.id);
+            const container = document.getElementById('mySubmissions');
+            
+            if (reports.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Abhi tak koi report nahi hai.</p>';
+                return;
+            }
+            
+            let html = '<table><thead><tr><th>Date</th><th>Orders</th><th>Online</th><th>Closing</th><th>Status</th></tr></thead><tbody>';
+            
+            reports.reverse().forEach(sub => {
+                const statusClass = sub.status === 'approved' ? 'status-approved' : sub.status === 'pending' ? 'status-pending' : 'status-rejected';
+                html += `
+                    <tr>
+                        <td>${sub.displayDate}</td>
+                        <td>${sub.orders.length} (Rs. ${sub.totalOrderAmount})</td>
+                        <td>Rs. ${sub.totalOnlinePayments}</td>
+                        <td>Rs. ${sub.closingBalance.toFixed(2)}</td>
+                        <td><span class="status ${statusClass}">${sub.status.toUpperCase()}</span></td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // ==================== PASSWORD CHANGE ====================
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'flex';
+        }
+
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+        }
+
+        function changePassword() {
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            
+            if (current !== currentUser.password) {
+                alert('❌ Current password galat hai!');
+                return;
+            }
+            
+            if (newPass !== confirm) {
+                alert('❌ New password match nahi ho raha!');
+                return;
+            }
+            
+            if (newPass.length < 4) {
+                alert('❌ Password kam az kam 4 characters ka hona chahiye!');
+                return;
+            }
+            
+            const riders = getRiders();
+            const rider = riders.find(r => r.id === currentUser.id);
+            rider.password = newPass;
+            saveRiders(riders);
+            currentUser.password = newPass;
+            
+            alert('✅ Password successfully change ho gaya!');
+            closePasswordModal();
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // ==================== ADMIN FUNCTIONS ====================
+        function loadAdminData() {
+            loadRidersList();
+            renderAdminReports();
+            renderOnlinePayments();
+            populateRiderFilter();
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.remove('hidden');
+            
+            if (tab === 'reports') renderAdminReports();
+            if (tab === 'online') renderOnlinePayments();
+        }
+
+        function addRider() {
+            const name = document.getElementById('newRiderName').value.trim();
+            const username = document.getElementById('newRiderUser').value.trim();
+            const password = document.getElementById('newRiderPass').value;
+            
+            if (!name || !username || !password) {
+                alert('❌ Sari fields fill karein!');
+                return;
+            }
+            
+            const riders = getRiders();
+            
+            if (riders.find(r => r.username === username)) {
+                alert('❌ Ye username pehle se exist karta hai!');
+                return;
+            }
+            
+            riders.push({
+                id: Date.now(),
+                name: name,
+                username: username,
+                password: password,
+                role: 'rider'
+            });
+            
+            saveRiders(riders);
+            
+            document.getElementById('newRiderName').value = '';
+            document.getElementById('newRiderUser').value = '';
+            document.getElementById('newRiderPass').value = '';
+            
+            loadRidersList();
+            populateRiderFilter();
+            alert('✅ Rider successfully add ho gaya!');
+        }
+
+        function loadRidersList() {
+            const riders = getRiders().filter(r => r.role === 'rider');
+            const container = document.getElementById('ridersList');
+            
+            if (riders.length === 0) {
+                container.innerHTML = '<p style="color: #666; text-align: center;">Koi rider nahi hai.</p>';
+                return;
+            }
+            
+            let html = '';
+            riders.forEach(rider => {
+                html += `
+                    <div class="rider-card">
+                        <div class="rider-info">
+                            <h4>${rider.name}</h4>
+                            <p>Username: ${rider.username}</p>
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn btn-secondary btn-small" onclick="resetRiderPassword(${rider.id})">Reset Password</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteRider(${rider.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function resetRiderPassword(id) {
+            const newPass = prompt('Naya password enter karein:');
+            if (!newPass) return;
+            
+            const riders = getRiders();
+            const rider = riders.find(r => r.id === id);
+            rider.password = newPass;
+            saveRiders(riders);
+            
+            alert('✅ Password reset ho gaya!');
+        }
+
+        function deleteRider(id) {
+            if (!confirm('❓ Kya aap is rider ko delete karna chahte hain?')) return;
+            
+            let riders = getRiders();
+            riders = riders.filter(r => r.id !== id);
+            saveRiders(riders);
+            
+            // Also delete rider's reports
+            let reports = getReports();
+            reports = reports.filter(r => r.riderId !== id);
+            saveReports(reports);
+            
+            loadRidersList();
+            populateRiderFilter();
+            renderAdminReports();
+        }
+
+        function populateRiderFilter() {
+            const select = document.getElementById('filterRider');
+            const riders = getRiders().filter(r => r.role === 'rider');
+            
+            let html = '<option value="all">All Riders</option>';
+            riders.forEach(r => {
+                html += `<option value="${r.id}">${r.name}</option>`;
+            });
+            select.innerHTML = html;
+        }
+
+        // ==================== ADMIN REPORTS ====================
+        function renderAdminReports() {
+            const statusFilter = document.getElementById('filterStatus').value;
+            const riderFilter = document.getElementById('filterRider').value;
+            
+            let reports = getReports();
+            
+            if (statusFilter !== 'all') {
+                reports = reports.filter(r => r.status === statusFilter);
+            }
+            
+            if (riderFilter !== 'all') {
+                reports = reports.filter(r => r.riderId == riderFilter);
+            }
+            
+            const container = document.getElementById('allReports');
+            
+            if (reports.length === 0) {
+                container.innerHTML = '<div class="card"><p style="color: #666; text-align: center;">Koi report nahi hai.</p></div>';
+                return;
+            }
+            
+            let html = '';
+            reports.reverse().forEach(sub => {
+                const statusClass = sub.status === 'approved' ? 'status-approved' : sub.status === 'pending' ? 'status-pending' : 'status-rejected';
+                html += `
+                    <div class="card">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-gray-800">${sub.riderName}</p>
+                                <p class="text-xs text-gray-500">${sub.displayDate}</p>
+                            </div>
+                            <span class="status ${statusClass}">${sub.status.toUpperCase()}</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; font-size: 13px;">
+                            <div><span class="text-gray-500">Opening:</span> <strong>Rs. ${sub.openingBalance}</strong></div>
+                            <div><span class="text-gray-500">Orders:</span> <strong>Rs. ${sub.totalOrderAmount}</strong></div>
+                            <div><span class="text-gray-500">Online:</span> <strong style="color: #e94560;">Rs. ${sub.totalOnlinePayments}</strong></div>
+                            <div><span class="text-gray-500">Delivery:</span> <strong>Rs. ${sub.totalDeliveryCharges}</strong></div>
+                            <div><span class="text-gray-500">Fuel:</span> <strong>Rs. ${sub.fuelAmount}</strong></div>
+                            <div><span class="text-gray-500">Closing:</span> <strong style="color: #27ae60;">Rs. ${sub.closingBalance.toFixed(2)}</strong></div>
+                        </div>
+                        <div class="action-btns">
+                            <button class="btn btn-small" onclick="viewReportDetails(${sub.id})" style="background: #533483;">👁 View</button>
+                            ${sub.status !== 'approved' ? `<button class="btn btn-success btn-small" onclick="updateReportStatus(${sub.id}, 'approved')">✓ Approve</button>` : ''}
+                            ${sub.status !== 'rejected' ? `<button class="btn btn-warning btn-small" onclick="updateReportStatus(${sub.id}, 'rejected')">✗ Reject</button>` : ''}
+                            ${sub.status !== 'pending' ? `<button class="btn btn-small" onclick="updateReportStatus(${sub.id}, 'pending')" style="background: #f39c12;">⏳ Pending</button>` : ''}
+                            <button class="btn btn-danger btn-small" onclick="deleteReport(${sub.id})">🗑 Delete</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function viewReportDetails(id) {
+            const report = getReports().find(r => r.id === id);
+            if (!report) return;
+            
+            const modal = document.getElementById('reportModal');
+            const content = document.getElementById('reportModalContent');
+            
+            let ordersHtml = '<h4 style="margin: 15px 0 10px; color: #e94560;">📦 Orders:</h4>';
+            report.orders.forEach((o, i) => {
+                ordersHtml += `<div style="background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 8px;">
+                    <strong>Order ${i+1}:</strong> ${o.customer} | Amount: Rs. ${o.amount} | Type: ${o.paymentType} | Delivery: Rs. ${o.deliveryCharges}
+                </div>`;
+            });
+            
+            let onlineHtml = '<h4 style="margin: 15px 0 10px; color: #e94560;">💳 Online Payments:</h4>';
+            if (report.onlinePayments && report.onlinePayments.length > 0) {
+                report.onlinePayments.forEach((p, i) => {
+                    onlineHtml += `<div style="background: #fff3cd; padding: 10px; margin: 5px 0; border-radius: 8px;">
+                        <strong>Payment ${i+1}:</strong> ${p.customer} | Rs. ${p.amount} | ${p.method} | Ref: ${p.reference || 'N/A'}
+                    </div>`;
+                });
+            } else {
+                onlineHtml += '<p style="color: #666;">Koi online payment nahi.</p>';
+            }
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Rider:</strong> ${report.riderName}</p>
+                    <p><strong>Date:</strong> ${report.displayDate}</p>
+                    <p><strong>Status:</strong> <span class="status status-${report.status}">${report.status.toUpperCase()}</span></p>
+                </div>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <p><strong>Opening Balance:</strong> Rs. ${report.openingBalance}</p>
+                    <p><strong>Total Orders:</strong> Rs. ${report.totalOrderAmount}</p>
+                    <p><strong>Online Payments:</strong> Rs. ${report.totalOnlinePayments}</p>
+                    <p><strong>Delivery Charges:</strong> Rs. ${report.totalDeliveryCharges}</p>
+                    <p><strong>Fuel:</strong> Rs. ${report.fuelAmount}</p>
+                    <p><strong>Other Expenses:</strong> Rs. ${report.otherExpenses}</p>
+                    <p><strong>Closing Balance:</strong> Rs. ${report.closingBalance.toFixed(2)}</p>
+                    ${report.notes ? `<p><strong>Notes:</strong> ${report.notes}</p>` : ''}
+                </div>
+                ${ordersHtml}
+                ${onlineHtml}
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function updateReportStatus(id, status) {
+            const reports = getReports();
+            const report = reports.find(r => r.id === id);
+            if (report) {
+                report.status = status;
+                saveReports(reports);
+                renderAdminReports();
+                renderOnlinePayments();
+                alert(`✅ Report ${status} kar diya gaya!`);
+            }
+        }
+
+        function deleteReport(id) {
+            if (!confirm('❓ Kya aap is report ko delete karna chahte hain?')) return;
+            
+            let reports = getReports();
+            reports = reports.filter(r => r.id !== id);
+            saveReports(reports);
+            
+            renderAdminReports();
+            renderOnlinePayments();
+        }
+
+        // ==================== ONLINE PAYMENTS & WHATSAPP ====================
+        function renderOnlinePayments() {
+            const container = document.getElementById('onlinePaymentsList');
+            const reports = getReports();
+            
+            // Collect all online payments from all reports
+            let allPayments = [];
+            reports.forEach(r => {
+                if (r.onlinePayments && r.onlinePayments.length > 0) {
+                    r.onlinePayments.forEach((p, idx) => {
+                        allPayments.push({
+                            ...p,
+                            reportId: r.id,
+                            riderName: r.riderName,
+                            date: r.displayDate,
+                            reportStatus: r.status,
+                            paymentIndex: idx
+                        });
+                    });
+                }
+            });
+            
+            if (allPayments.length === 0) {
+                container.innerHTML = '<div class="card"><p style="color: #666; text-align: center;">Koi online payment nahi hai.</p></div>';
+                return;
+            }
+            
+            let html = '';
+            allPayments.reverse().forEach(p => {
+                html += `
+                    <div class="card" style="border-left-color: #25d366;">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-bold text-gray-800">${p.customer}</p>
+                                <p class="text-xs text-gray-500">${p.riderName} | ${p.date} | ${p.method}</p>
+                                ${p.reference ? `<p class="text-xs text-gray-400">Ref: ${p.reference}</p>` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <p class="font-bold" style="color: #e94560; font-size: 20px;">Rs. ${p.amount}</p>
+                                <span class="status status-${p.reportStatus}">${p.reportStatus}</span>
+                            </div>
+                        </div>
+                        <div class="action-btns" style="margin-top: 15px;">
+                            <button class="btn btn-small whatsapp-btn" onclick="sendWhatsAppReminder('${encodeURIComponent(p.customer)}', ${p.amount}, '${p.date}', '${encodeURIComponent(p.riderName)}')">
+                                <i class="fab fa-whatsapp"></i> Payment Reminder
+                            </button>
+                            <button class="btn btn-small whatsapp-btn" style="background: #128c7e !important;" onclick="sendWhatsAppStatement('${encodeURIComponent(p.customer)}', ${p.amount}, '${p.date}', '${encodeURIComponent(p.riderName)}', '${p.method}')">
+                                <i class="fab fa-whatsapp"></i> Full Statement
+                            </button>
+                            <button class="btn btn-small" onclick="viewReportDetails(${p.reportId})" style="background: #533483;">
+                                👁 View Report
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function sendWhatsAppReminder(customerEncoded, amount, date, riderEncoded) {
+            const customer = decodeURIComponent(customerEncoded);
+            const rider = decodeURIComponent(riderEncoded);
+            
+            const message = `Assalam o Alaikum *${customer}*! 🙏
+
+HFC Restaurant ki taraf se reminder hai.
+
+💰 *Aapki payment pending hai:*
+   Amount: *Rs. ${amount}*
+   Date: ${date}
+   Rider: ${rider}
+
+Barah-e-karam jald az jald payment kar dein.
+Shukria! 🍔
+
+— *HFC Restaurant*`;
+            
+            const encodedMsg = encodeURIComponent(message);
+            const url = `https://wa.me/?text=${encodedMsg}`;
+            window.open(url, '_blank');
+        }
+
+        function sendWhatsAppStatement(customerEncoded, amount, date, riderEncoded, method) {
+            const customer = decodeURIComponent(customerEncoded);
+            const rider = decodeURIComponent(riderEncoded);
+            
+            // Find all payments for this customer
+            const reports = getReports();
+            let customerPayments = [];
+            let totalPending = 0;
+            
+            reports.forEach(r => {
+                if (r.onlinePayments) {
+                    r.onlinePayments.forEach(p => {
+                        if (p.customer.toLowerCase().includes(customer.toLowerCase()) || 
+                            customer.toLowerCase().includes(p.customer.toLowerCase())) {
+                            customerPayments.push({
+                                date: r.displayDate,
+                                amount: p.amount,
+                                method: p.method,
+                                status: r.status
+                            });
+                            totalPending += p.amount;
+                        }
+                    });
+                }
+            });
+            
+            let paymentList = customerPayments.map((p, i) => 
+                `${i+1}. ${p.date} — Rs. ${p.amount} (${p.method})`
+            ).join('\n');
+            
+            const message = `Assalam o Alaikum *${customer}*! 🙏
+
+*HFC Restaurant* — Aapka mukammal hisaab:
+
+${paymentList}
+
+━━━━━━━━━━━━━━
+💰 *Kul Baqi Raqam: Rs. ${totalPending}*
+━━━━━━━━━━━━━━
+
+Barah-e-karam jald payment clear kar dein.
+Shukria! 🍔
+
+— *HFC Restaurant*`;
+            
+            const encodedMsg = encodeURIComponent(message);
+            const url = `https://wa.me/?text=${encodedMsg}`;
+            window.open(url, '_blank');
+        }
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            const passModal = document.getElementById('passwordModal');
+            const repModal = document.getElementById('reportModal');
+            if (event.target === passModal) passModal.style.display = 'none';
+            if (event.target === repModal) repModal.style.display = 'none';
+        }
+    </script>
+</body>
+                          </html>
