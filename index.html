@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#e94560">
+<style>
+    html { -webkit-text-size-adjust: 100%; touch-action: manipulation; }
+    input, select, button { -webkit-appearance: none; appearance: none; }
+    * { -webkit-tap-highlight-color: transparent; }
+</style>
     <title>HFC Rider Management System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -390,12 +396,153 @@
         
         /* Responsive */
         @media (max-width: 768px) {
-            .online-payment-row .row-header { grid-template-columns: 1fr; }
-            .order-row { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .header { flex-direction: column; gap: 15px; text-align: center; }
-            .rider-card { flex-direction: column; gap: 15px; text-align: center; }
-        }
+    /* Container padding kam */
+    .container { padding: 10px; }
+
+    /* Dashboard padding kam */
+    .dashboard { padding: 15px; border-radius: 12px; }
+
+    /* Header stack ho jaye */
+    .header { 
+        flex-direction: column; 
+        gap: 10px; 
+        text-align: center; 
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+    .header h2 { font-size: 18px; }
+    .header .user-info { justify-content: center; flex-wrap: wrap; }
+
+    /* Stats - 2 column mobile pe */
+    .stats-grid { 
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px; 
+        margin-bottom: 15px;
+    }
+    .stat-card { padding: 12px 8px; border-radius: 10px; }
+    .stat-card h3 { font-size: 10px; }
+    .stat-card .value { font-size: 18px; }
+
+    /* Card padding kam */
+    .card { padding: 15px; border-radius: 10px; margin-bottom: 12px; }
+    .card h3 { font-size: 15px; margin-bottom: 12px; }
+
+    /* Tabs scroll ho sakein */
+    .tabs { 
+        overflow-x: auto; 
+        flex-wrap: nowrap; 
+        gap: 6px;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .tab { 
+        padding: 8px 14px; 
+        font-size: 12px; 
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Online Payment Row - mobile pe ek column */
+    .online-payment-row { padding: 12px; gap: 8px; }
+    .online-payment-row .row-header { 
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px;
+    }
+    .online-payment-row input, 
+    .online-payment-row select { 
+        padding: 10px; 
+        font-size: 14px; 
+    }
+
+    /* Customer ID full width */
+    .online-payment-row .row-header input:first-child { 
+        grid-column: 1 / -1; 
+    }
+
+    /* Naam, Address, Phone - teen alag fields */
+    .online-name, .online-address { grid-column: 1 / -1; }
+
+    /* Clear button full width */
+    .warning-btn { 
+        grid-column: 1 / -1 !important; 
+        width: 100% !important;
+    }
+
+    /* Order Row */
+    .order-row { 
+        grid-template-columns: 1fr 1fr; 
+        gap: 8px; 
+        padding: 10px;
+    }
+    .order-row input:first-child { grid-column: 1 / -1; }
+    .order-row .remove-order { grid-column: 1 / -1; }
+
+    /* Summary box */
+    .summary-box { padding: 15px; }
+    .summary-box h4 { font-size: 16px; }
+    .summary-item { font-size: 13px; padding: 8px 0; }
+    .summary-item.total { font-size: 17px; }
+
+    /* Buttons */
+    .btn { padding: 12px; font-size: 14px; }
+    .btn-small { padding: 7px 12px; font-size: 12px; }
+    .add-btn { padding: 12px 20px; font-size: 14px; width: 100%; }
+
+    /* Rider card */
+    .rider-card { 
+        flex-direction: column; 
+        gap: 10px; 
+        text-align: center; 
+        padding: 15px;
+    }
+    .action-btns { justify-content: center; }
+
+    /* Table responsive */
+    table { font-size: 12px; }
+    th, td { padding: 8px 6px; }
+
+    /* Admin rider add form - stack */
+    .card > div[style*="grid-template-columns: 1fr 1fr 1fr auto"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Customer add form - stack */
+    .card > div[style*="grid-template-columns: 1fr 1fr 1fr 1fr auto"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Image upload area */
+    .image-upload-area { padding: 15px; }
+    .image-upload-area i { font-size: 24px; }
+
+    /* Login box */
+    .login-box { 
+        margin: 20px auto; 
+        padding: 25px 20px; 
+        border-radius: 15px;
+    }
+    .hfc-logo { font-size: 36px; }
+    .login-box h1 { font-size: 24px; }
+
+    /* Modal */
+    .modal-content { padding: 20px; border-radius: 15px; }
+    .modal-header h3 { font-size: 16px; }
+
+    /* Report cards grid */
+    .card > div[style*="grid-template-columns: repeat(3, 1fr)"] {
+        grid-template-columns: 1fr 1fr !important;
+    }
+}
+
+/* Extra small phones (320px-380px) */
+@media (max-width: 380px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .online-payment-row .row-header { grid-template-columns: 1fr; }
+    .order-row { grid-template-columns: 1fr; }
+    .stat-card .value { font-size: 20px; }
+    .tabs { gap: 4px; }
+    .tab { padding: 7px 10px; font-size: 11px; }
+}
         
         .hfc-logo {
             font-size: 48px;
@@ -559,6 +706,7 @@
                     <button class="tab active" onclick="switchTab('riders')">👥 Riders</button>
                     <button class="tab" onclick="switchTab('reports')">📋 Reports</button>
                     <button class="tab" onclick="switchTab('online')">💳 Online Payments</button>
+					<button class="tab" onclick="switchTab('customers')">👤 Customers</button>
                 </div>
 
                 <!-- Riders Tab -->
@@ -618,7 +766,39 @@
             </div>
         </div>
     </div>
-
+<!-- Customers Tab -->
+<div id="customersTab" class="tab-content hidden">
+    <div class="card">
+        <h3>👤 Customer Database</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Customer ID</label>
+                <input type="text" id="newCustId" placeholder="e.g. R111" style="text-transform:uppercase;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Naam</label>
+                <input type="text" id="newCustName" placeholder="Customer ka naam">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Address</label>
+                <input type="text" id="newCustAddr" placeholder="Ghar / dukaan ka pata">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>Phone</label>
+                <input type="text" id="newCustPhone" placeholder="03XXXXXXXXX">
+            </div>
+            <button class="btn btn-success btn-small" onclick="addCustomer()" style="padding: 12px 20px;">Add</button>
+        </div>
+        <div id="custAlert" style="margin-top: 10px;"></div>
+    </div>
+    <div class="card">
+        <h3>All Customers</h3>
+        <input type="text" id="custSearch" placeholder="🔍 Search by ID, naam ya phone..." 
+               oninput="renderCustomersList()" 
+               style="width:100%; padding:10px; border:2px solid #ddd; border-radius:8px; margin-bottom:15px; font-size:15px;">
+        <div id="customersList"></div>
+    </div>
+</div>
     <!-- Password Change Modal -->
     <div id="passwordModal" class="modal-overlay">
         <div class="modal-content">
@@ -655,11 +835,12 @@
 
     <script>
 	// ========== CUSTOMER DATABASE ==========
-const customerDB = {
-    'R111': { name: 'Ravi', address: 'Jeetu Shop', phone: '03111111111' },
-    'R222': { name: 'Ali Ahmed', address: 'Main Market Block 5', phone: '03222222222' },
-    'R333': { name: 'Sara Khan', address: 'Defence Phase 2', phone: '03333333333' },
-};
+function getCustomerDB() {
+    return JSON.parse(localStorage.getItem('hfc_customers')) || {};
+}
+function saveCustomerDB(db) {
+    localStorage.setItem('hfc_customers', JSON.stringify(db));
+}
         // ==================== DATA STORAGE ====================
 		let currentUser = null;
         let currentRole = 'rider';
@@ -670,9 +851,10 @@ const customerDB = {
                     { id: 1, name: 'Admin', username: 'admin', password: 'admin123', role: 'admin' }
                 ]));
             }
-            if (!localStorage.getItem('hfc_reports')) {
-                localStorage.setItem('hfc_reports', JSON.stringify([]));
-            }
+           if (!localStorage.getItem('hfc_customers')) {
+    // Purana hardcoded customerDB ko localStorage mein migrate karein
+    localStorage.setItem('hfc_customers', JSON.stringify(customerDB));
+}
         }
 
         initData();
@@ -883,7 +1065,7 @@ const customerDB = {
         }
 		function lookupCustomer(input, payId) {
     const id = input.value.trim().toUpperCase();
-    const customer = customerDB[id];
+	const customer = getCustomerDB()[id];
 
     if (customer) {
         document.getElementById(`cname-${payId}`).value = customer.name;
@@ -894,6 +1076,89 @@ const customerDB = {
         document.getElementById(`caddr-${payId}`).value = '';
         document.getElementById(`cphone-${payId}`).value = '';
     }
+}
+function addCustomer() {
+    const id = document.getElementById('newCustId').value.trim().toUpperCase();
+    const name = document.getElementById('newCustName').value.trim();
+    const address = document.getElementById('newCustAddr').value.trim();
+    const phone = document.getElementById('newCustPhone').value.trim();
+
+    if (!id || !name || !address || !phone) {
+        showAlert('custAlert', 'Sari fields fill karein!', 'error');
+        return;
+    }
+
+    const db = getCustomerDB();
+    const isEdit = !!db[id];
+    db[id] = { name, address, phone };
+    saveCustomerDB(db);
+
+    document.getElementById('newCustId').value = '';
+    document.getElementById('newCustName').value = '';
+    document.getElementById('newCustAddr').value = '';
+    document.getElementById('newCustPhone').value = '';
+
+    renderCustomersList();
+    showAlert('custAlert', isEdit ? `✅ ${id} update ho gaya!` : `✅ Customer ${id} add ho gaya!`, 'success');
+}
+
+function editCustomer(id) {
+    const db = getCustomerDB();
+    const c = db[id];
+    document.getElementById('newCustId').value = id;
+    document.getElementById('newCustName').value = c.name;
+    document.getElementById('newCustAddr').value = c.address;
+    document.getElementById('newCustPhone').value = c.phone;
+    document.getElementById('newCustId').readOnly = true;
+    document.getElementById('newCustId').style.background = '#f0f0f0';
+}
+
+function deleteCustomer(id) {
+    if (!confirm(`❓ "${id}" customer ko delete karna chahte hain?`)) return;
+    const db = getCustomerDB();
+    delete db[id];
+    saveCustomerDB(db);
+    renderCustomersList();
+}
+
+function renderCustomersList() {
+    const db = getCustomerDB();
+    const search = document.getElementById('custSearch')?.value.toLowerCase() || '';
+    const container = document.getElementById('customersList');
+    if (!container) return;
+
+    const entries = Object.entries(db).filter(([id, c]) =>
+        id.toLowerCase().includes(search) ||
+        c.name.toLowerCase().includes(search) ||
+        c.phone.includes(search)
+    );
+
+    if (entries.length === 0) {
+        container.innerHTML = '<p style="color:#666; text-align:center;">Koi customer nahi mila.</p>';
+        return;
+    }
+
+    let html = `<table><thead><tr>
+        <th>ID</th><th>Naam</th><th>Address</th><th>Phone</th><th>Action</th>
+    </tr></thead><tbody>`;
+
+    entries.forEach(([id, c]) => {
+        html += `<tr>
+            <td><strong style="color:#e94560;">${id}</strong></td>
+            <td>${c.name}</td>
+            <td>${c.address}</td>
+            <td>${c.phone}</td>
+            <td>
+                <button onclick="editCustomer('${id}')" 
+                    style="background:#533483; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; margin-right:5px;">✏️ Edit</button>
+                <button onclick="deleteCustomer('${id}')" 
+                    style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">🗑 Delete</button>
+            </td>
+        </tr>`;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
 }
         // Handle image upload for proof
         function handleImageUpload(input, payId) {
@@ -1090,6 +1355,7 @@ const customerDB = {
             renderAdminReports();
             renderOnlinePayments();
             populateRiderFilter();
+			renderCustomersList();
         }
 
         function switchTab(tab) {
@@ -1101,6 +1367,7 @@ const customerDB = {
             
             if (tab === 'reports') renderAdminReports();
             if (tab === 'online') renderOnlinePayments();
+			if (tab === 'customers') renderCustomersList();
         }
 
         function addRider() {
