@@ -7,6 +7,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+		/* Auto-fill readonly fields */
+.readonly-field {
+    background: #f0fff4 !important;
+    border-color: #2ecc71 !important;
+    color: #155724 !important;
+    font-weight: 600;
+}
         body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
@@ -133,7 +140,7 @@
         
         .online-payment-row .row-header {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
             gap: 12px;
             align-items: center;
         }
@@ -647,8 +654,14 @@
     </div>
 
     <script>
+	// ========== CUSTOMER DATABASE ==========
+const customerDB = {
+    'R111': { name: 'Ravi', address: 'Jeetu Shop', phone: '03111111111' },
+    'R222': { name: 'Ali Ahmed', address: 'Main Market Block 5', phone: '03222222222' },
+    'R333': { name: 'Sara Khan', address: 'Defence Phase 2', phone: '03333333333' },
+};
         // ==================== DATA STORAGE ====================
-        let currentUser = null;
+		let currentUser = null;
         let currentRole = 'rider';
 
         function initData() {
@@ -818,7 +831,15 @@
             
             payDiv.innerHTML = `
                 <div class="row-header">
-                    <input type="text" placeholder="Customer Name / Detail *" class="online-customer" required style="font-size: 16px;">
+                    <input type="text" placeholder="Customer ID (e.g. R111) *" 
+       class="online-customer" required style="font-size: 16px;"
+       oninput="lookupCustomer(this, '${payId}')">
+	   <input type="text" id="cname-${payId}" placeholder="Naam (auto)" 
+       class="online-name readonly-field" readonly>
+<input type="text" id="caddr-${payId}" placeholder="Address (auto)" 
+       class="online-address readonly-field" readonly>
+<input type="text" id="cphone-${payId}" placeholder="Phone (auto)" 
+       class="online-phone readonly-field" readonly>
                     <input type="number" placeholder="Amount (Rs.) *" class="online-amount" required onchange="calculateSummary()" style="font-size: 16px;">
                     <select class="online-method" style="font-size: 15px;">
                         <option value="Easypaisa">Easypaisa</option>
@@ -860,7 +881,20 @@
             if (el) el.remove();
             calculateSummary();
         }
+		function lookupCustomer(input, payId) {
+    const id = input.value.trim().toUpperCase();
+    const customer = customerDB[id];
 
+    if (customer) {
+        document.getElementById(`cname-${payId}`).value = customer.name;
+        document.getElementById(`caddr-${payId}`).value = customer.address;
+        document.getElementById(`cphone-${payId}`).value = customer.phone;
+    } else {
+        document.getElementById(`cname-${payId}`).value = '';
+        document.getElementById(`caddr-${payId}`).value = '';
+        document.getElementById(`cphone-${payId}`).value = '';
+    }
+}
         // Handle image upload for proof
         function handleImageUpload(input, payId) {
             if (input.files && input.files[0]) {
@@ -934,6 +968,9 @@
             document.querySelectorAll('#onlinePaymentsContainer .online-payment-row').forEach(row => {
                 onlinePayments.push({
                     customer: row.querySelector('.online-customer').value,
+					customerName: row.querySelector('.online-name')?.value || '',
+					customerAddress: row.querySelector('.online-address')?.value || '',
+					customerPhone: row.querySelector('.online-phone')?.value || '',
                     amount: parseFloat(row.querySelector('.online-amount').value) || 0,
                     method: row.querySelector('.online-method').value,
                     reference: row.querySelector('.online-ref').value,
